@@ -7,5 +7,9 @@ git remote add origin https://github.com/francocil/GestionGastronomica.git
 git branch -M main
 git push -u origin main
 
+*********** Actualizar ***********
+git commit -m "actualizo git"
+git push
+
 
 
