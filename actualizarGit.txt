@@ -8,7 +8,8 @@ git branch -M main
 git push -u origin main
 
 *********** Actualizar ***********
-git commit -m "actualizo git"
+git add .
+git commit -m "Comit Listo"
 git push
 
 
