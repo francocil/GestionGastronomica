@@ -1,0 +1,66 @@
+================================================================================
+ESTRUCTURA DE BASE DE DATOS
+Base: gestion_gastronomica
+================================================================================
+
+
+--------------------------------------------------------------------------------
+TABLA: public.alembic_version
+--------------------------------------------------------------------------------
+  - version_num                    | character varying    | NULLABLE: NO
+
+--------------------------------------------------------------------------------
+TABLA: public.products
+--------------------------------------------------------------------------------
+  - id                             | integer              | NULLABLE: NO
+  - tenant_id                      | integer              | NULLABLE: NO
+  - nombre                         | character varying    | NULLABLE: NO
+  - descripcion                    | character varying    | NULLABLE: YES
+  - precio                         | double precision     | NULLABLE: NO
+  - activo                         | boolean              | NULLABLE: NO
+  - fecha_creacion                 | timestamp with time zone | NULLABLE: YES
+  - fecha_actualizacion            | timestamp with time zone | NULLABLE: YES
+
+--------------------------------------------------------------------------------
+TABLA: public.roles
+--------------------------------------------------------------------------------
+  - id                             | integer              | NULLABLE: NO
+  - nombre                         | character varying    | NULLABLE: NO
+  - descripcion                    | character varying    | NULLABLE: YES
+  - activo                         | boolean              | NULLABLE: NO
+  - fecha_creacion                 | timestamp with time zone | NULLABLE: YES
+  - fecha_actualizacion            | timestamp with time zone | NULLABLE: YES
+
+--------------------------------------------------------------------------------
+TABLA: public.tenants
+--------------------------------------------------------------------------------
+  - id                             | integer              | NULLABLE: NO
+  - nombre                         | character varying    | NULLABLE: NO
+  - razon_social                   | character varying    | NULLABLE: YES
+  - cuit                           | character varying    | NULLABLE: YES
+  - activo                         | boolean              | NULLABLE: NO
+  - fecha_creacion                 | timestamp with time zone | NULLABLE: YES
+  - fecha_actualizacion            | timestamp with time zone | NULLABLE: YES
+
+--------------------------------------------------------------------------------
+TABLA: public.user_tenant_role
+--------------------------------------------------------------------------------
+  - id                             | integer              | NULLABLE: NO
+  - user_id                        | integer              | NULLABLE: NO
+  - tenant_id                      | integer              | NULLABLE: NO
+  - role_id                        | integer              | NULLABLE: NO
+  - fecha_creacion                 | timestamp with time zone | NULLABLE: YES
+  - fecha_actualizacion            | timestamp with time zone | NULLABLE: YES
+
+--------------------------------------------------------------------------------
+TABLA: public.users
+--------------------------------------------------------------------------------
+  - id                             | integer              | NULLABLE: NO
+  - email                          | character varying    | NULLABLE: NO
+  - password_hash                  | character varying    | NULLABLE: NO
+  - nombre                         | character varying    | NULLABLE: NO
+  - apellido                       | character varying    | NULLABLE: NO
+  - activo                         | boolean              | NULLABLE: NO
+  - fecha_creacion                 | timestamp with time zone | NULLABLE: YES
+  - fecha_actualizacion            | timestamp with time zone | NULLABLE: YES
+  

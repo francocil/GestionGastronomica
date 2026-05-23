@@ -1,0 +1,130 @@
+├── Estructura.txt
+├── backend
+│   ├── alembic
+│   │   ├── README
+│   │   ├── env.py
+│   │   ├── script.py.mako
+│   │   └── versions
+│   │       ├── 20260516_02_create_products_table.py
+│   │       ├── 20260517_01_create_permissions_tables.py
+│   │       ├── 5eafcb130b7e_create_products_table.py
+│   │       └── aa84a1b5c5ec_initial_iam_schema.py
+│   ├── alembic.ini
+│   └── app
+│       ├── api
+│       │   ├── __init__.py
+│       │   ├── admin_assignments.py
+│       │   ├── admin_roles.py
+│       │   ├── admin_tenants.py
+│       │   ├── admin_users.py
+│       │   ├── auth.py
+│       │   ├── products.py
+│       │   └── router.py
+│       ├── core
+│       │   ├── __init__.py
+│       │   ├── config.py
+│       │   ├── permissions.py
+│       │   ├── request_state.py
+│       │   └── security.py
+│       ├── db
+│       │   ├── __init__.py
+│       │   └── session.py
+│       ├── main.py
+│       ├── models
+│       │   ├── __init__.py
+│       │   ├── base.py
+│       │   ├── permission.py
+│       │   ├── product.py
+│       │   ├── role.py
+│       │   ├── role_permission.py
+│       │   ├── tenant.py
+│       │   ├── user.py
+│       │   └── user_tenant_role.py
+│       ├── schemas
+│       │   ├── __init__.py
+│       │   ├── auth.py
+│       │   ├── base.py
+│       │   ├── product.py
+│       │   ├── role.py
+│       │   ├── tenant.py
+│       │   └── user.py
+│       └── services
+│           ├── __init__.py
+│           ├── auth_service.py
+│           ├── base.py
+│           ├── permission_service.py
+│           ├── product_service.py
+│           ├── role_service.py
+│           ├── tenant_service.py
+│           ├── user_service.py
+│           └── user_tenant_role_service.py
+├── estructura_db.txt
+├── frontend
+│   └── web
+│       ├── .gitignore
+│       ├── AGENTS.md
+│       ├── CLAUDE.md
+│       ├── README.md
+│       ├── app
+│       │   ├── (private)
+│       │   │   ├── dashboard
+│       │   │   │   └── page.tsx
+│       │   │   ├── products
+│       │   │   │   ├── ProductForm.tsx
+│       │   │   │   ├── [id]
+│       │   │   │   │   └── page.tsx
+│       │   │   │   ├── create
+│       │   │   │   │   └── page.tsx
+│       │   │   │   └── page.tsx
+│       │   │   └── users
+│       │   │       ├── UserEditForm.tsx
+│       │   │       ├── UserForm.tsx
+│       │   │       ├── UserList.tsx
+│       │   │       ├── UserRolesForm.tsx
+│       │   │       ├── UserTenantsForm.tsx
+│       │   │       ├── [id]
+│       │   │       │   └── page.tsx
+│       │   │       └── page.tsx
+│       │   ├── (public)
+│       │   │   ├── login
+│       │   │   │   ├── LoginForm.tsx
+│       │   │   │   └── page.tsx
+│       │   │   └── select-tenant
+│       │   │       ├── SelectTenantForm.tsx
+│       │   │       └── page.tsx
+│       │   ├── components
+│       │   │   └── ui
+│       │   │       ├── Button.tsx
+│       │   │       ├── Card.tsx
+│       │   │       ├── Input.tsx
+│       │   │       └── ToastProvider.tsx
+│       │   ├── favicon.ico
+│       │   ├── globals.css
+│       │   ├── layout.tsx
+│       │   ├── middleware.ts
+│       │   ├── page.tsx
+│       │   ├── services
+│       │   │   ├── api.ts
+│       │   │   ├── auth.service.ts
+│       │   │   └── products.service.ts
+│       │   └── store
+│       │       └── auth.store.ts
+│       ├── eslint.config.mjs
+│       ├── next-env.d.ts
+│       ├── next.config.ts
+│       ├── package-lock.json
+│       ├── package.json
+│       ├── postcss.config.mjs
+│       ├── public
+│       │   ├── file.svg
+│       │   ├── globe.svg
+│       │   ├── next.svg
+│       │   ├── vercel.svg
+│       │   └── window.svg
+│       └── tsconfig.json
+├── my_tables.py
+├── tools
+│   ├── Glosario.txt
+│   ├── requerimientosDeInstaladores.txt
+│   └── setup_project.ps1
+└── tree.py

@@ -1,0 +1,244 @@
+===================================================================================================
+Glosario
+===================================================================================================
+0-
+Levantá backend: este comando lo ejecutas desde cualquier carpeta
+uvicorn app.main:app --reload --app-dir backend
+
+Levantá frontend:
+npm run dev
+
+Abrí:
+http://localhost:3000/login
+----------------------------------------------------------------------------------------------------
+1- REPL (Python Interactive Shell)
+Qué es: intérprete interactivo de Python que aparece al ejecutar python o python.exe.
+
+Prompt: >>>
+Uso: ejecutar código Python línea por línea.
+Salir: exit() o Ctrl + Z + Enter.
+
+Nota: mientras estás en el REPL, no podés ejecutar comandos de PowerShell.
+----------------------------------------------------------------------------------------------------
+2- Entorno Virtual Global del Proyecto
+Ruta: C:\GestionGastronomica\.venv  
+Descripción:  
+Entorno virtual único utilizado por todo el proyecto (backend y herramientas internas).
+Permite mantener versiones consistentes de Python y dependencias sin duplicación.
+Se activa con:
+.\.venv\Scripts\Activate.ps1  
+Se desactiva con:
+deactivate  
+No se versiona ni se inspecciona su contenido.
+----------------------------------------------------------------------------------------------------
+3- main.py (Backend – Punto de Entrada)
+Archivo principal del backend FastAPI.
+Contiene la instancia global app y los metadatos del proyecto.
+Es el punto de montaje de routers, middlewares y configuración global.
+Ruta: backend/app/main.py.
+----------------------------------------------------------------------------------------------------
+4- Cuando cerremos IAM, agregaremos:
+DATABASE_URL: cadena de conexión completa a PostgreSQL.
+engine: objeto SQLAlchemy que gestiona la conexión.
+SessionLocal: fábrica de sesiones para operaciones DB.
+DeclarativeBase: clase base para modelos ORM.
+----------------------------------------------------------------------------------------------------
+5- Paquete Python: módulo instalable vía pip dentro del entorno virtual.
+Herramienta global: ejecutable disponible en el sistema operativo.
+pip show: comando para verificar si un paquete Python está instalado.
+----------------------------------------------------------------------------------------------------
+6- Cuando cerremos IAM, agregaremos:
+User: entidad que representa un usuario autenticable del sistema.
+password_hash: contraseña encriptada usando bcrypt.
+Relación User–Tenant: un usuario puede pertenecer a múltiples empresas.
+
+Role: conjunto de permisos asignable a un usuario dentro de un tenant.
+roles estándar sugeridos: admin, manager, staff, etc.
+Relación Role–UserTenantRole: un rol puede asignarse a múltiples usuarios en múltiples 
+tenants.
+----------------------------------------------------------------------------------------------------
+7- Tenant: Entidad que representa una empresa, sucursal o unidad organizacional dentro 
+del sistema multi‑tenant.
+Aislamiento de datos: Principio por el cual cada tenant posee sus propios usuarios, roles, 
+operaciones y configuraciones, evitando interferencias entre empresas.
+UserTenantRole: Modelo pivot que vincula un usuario con un tenant y un rol, permitiendo 
+que un mismo usuario tenga permisos distintos en diferentes empresas.
+Auditoría (fecha_creacion / fecha_actualizacion): Campos automáticos que registran la 
+creación y última modificación de un registro para trazabilidad interna.
+----------------------------------------------------------------------------------------------------
+8- UserTenantRole: Modelo pivot que vincula un usuario con un tenant y un rol. Permite 
+que un usuario pertenezca a múltiples empresas y tenga distintos roles en cada una.
+Relación N‑a‑N: Estructura donde un usuario puede estar en varios tenants y un tenant 
+puede tener múltiples usuarios.
+Restricción uq_user_tenant: Garantiza que un usuario no pueda tener más de un rol asignado 
+dentro del mismo tenant.
+Auditoría (fecha_creacion / fecha_actualizacion): Campos automáticos que registran la 
+creación y modificación del registro para trazabilidad.
+----------------------------------------------------------------------------------------------------
+9- LoginRequest: Schema que valida las credenciales enviadas por el usuario (email y 
+contraseña).
+TokenResponse: Estructura estándar de respuesta que contiene el token JWT generado tras 
+un login exitoso.
+AuthenticatedUser: Representación del usuario autenticado, incluyendo su rol y tenant activo.
+JWT (JSON Web Token): Token firmado que permite autenticar solicitudes sin almacenar sesiones 
+en el servidor.
+token_type: Tipo de token devuelto por el sistema, normalmente "bearer".
+------------------------------------------------------------------------------------------------
+10- UserBase: Schema base que define los campos comunes del usuario (email, nombre, 
+apellido, activo).
+UserCreate: Schema utilizado para crear usuarios. Incluye la contraseña en texto plano 
+antes de ser hasheada.
+UserResponse: Representación pública del usuario devuelta por la API. No incluye contraseña 
+ni datos sensibles.
+UserWithTenantRole: Representación del usuario dentro de un tenant específico, incluyendo 
+su rol asignado.
+from_attributes: Configuración de Pydantic v2 que permite construir schemas directamente desde 
+modelos ORM.
+----------------------------------------------------------------------------------------------------
+11- TenantBase: Schema base que define los campos comunes de un tenant (nombre, razón social, 
+cuit, activo).
+TenantCreate: Schema utilizado para crear un nuevo tenant. Extiende TenantBase sin agregar 
+campos adicionales.
+TenantResponse: Representación pública del tenant devuelta por la API. Incluye el ID generado 
+por la base de datos.
+from_attributes: Configuración de Pydantic v2 que permite construir schemas directamente 
+desde modelos ORM.
+----------------------------------------------------------------------------------------------------
+12- RoleBase: Schema base que define los campos comunes de un rol (nombre, descripción, activo).
+RoleCreate: Schema utilizado para crear un nuevo rol. Extiende RoleBase sin agregar campos 
+adicionales.
+RoleResponse: Representación pública del rol devuelta por la API. Incluye el ID generado por la 
+base de datos.
+from_attributes: Configuración de Pydantic v2 que permite construir schemas directamente desde 
+modelos ORM.
+----------------------------------------------------------------------------------------------------
+13- hash_password: Función que convierte una contraseña en un hash seguro usando bcrypt.
+verify_password: Función que compara una contraseña en texto plano con su hash almacenado.
+authenticate_user: Lógica que valida email + contraseña y devuelve el usuario autenticado.
+create_access_token: Función que genera un token JWT firmado con expiración configurable.
+decode_token: Función que valida un JWT y devuelve su contenido si es válido.
+SECRET_KEY: Clave secreta utilizada para firmar tokens JWT. Debe cambiarse en producción.
+ACCESS_TOKEN_EXPIRE_MINUTES: Tiempo de expiración del token de acceso.
+UserTenantRole: Relación que determina el rol del usuario dentro de un tenant específico.
+----------------------------------------------------------------------------------------------------
+14- /auth/login: Endpoint que valida credenciales del usuario y genera un token JWT. Si el usuario 
+pertenece a un único tenant, lo selecciona automáticamente.
+/auth/me: Endpoint que devuelve la información del usuario autenticado, incluyendo tenant activo y 
+rol asignado.
+/auth/select-tenant: Endpoint que permite seleccionar el tenant activo cuando un usuario pertenece a 
+múltiples empresas.
+/sub: Claim del JWT que representa el ID del usuario autenticado.
+/tenant_id: Claim del JWT que indica el tenant activo dentro del token.
+/role: Claim del JWT que indica el rol del usuario dentro del tenant seleccionado.
+Auth API: Conjunto de endpoints que gestionan autenticación, selección de tenant y validación de 
+identidad mediante JWT.
+----------------------------------------------------------------------------------------------------
+15- AuthMiddleware: Middleware que valida el token JWT en cada request y expone user_id, tenant_id y 
+role en request.state.
+request.state: Objeto donde se almacenan datos del usuario autenticado para que cualquier endpoint 
+pueda accederlos.
+Authorization Header: Header HTTP que contiene el token JWT en formato Bearer <token>.
+Rutas públicas: Endpoints que no requieren autenticación y se excluyen del middleware.
+JWT Middleware: Componente que intercepta cada request, valida el token y controla acceso a recursos 
+protegidos.
+----------------------------------------------------------------------------------------------------
+16- SoftDeleteIAM: Todos los modelos IAM (User, Role, Tenant) usan el campo activo para borrado lógico.
+Los endpoints DELETE de admin cambian activo=False en lugar de borrar el registro.
+----------------------------------------------------------------------------------------------------
+17- Prefijo admin para IAM: /admin/roles
+    Parámetros estándar de listado: skip, limit, only_active.
+----------------------------------------------------------------------------------------------------
+18- “Assignment” = relación User–Tenant–Role.
+    registro en UserTenantRole que vincula user_id, tenant_id, role_id.
+    CRUD de assignments usa hard delete (se elimina el registro).
+    IAM Avanzado podrá agregar permisos granulares sobre esta tabla.
+----------------------------------------------------------------------------------------------------
+19- router principal: app.api.router.router
+    Convención: cada módulo expone router y se incluye desde router.py.
+----------------------------------------------------------------------------------------------------
+20- AdminEndpoints: Prefijo /admin/<modulo>.
+    ListParams: skip, limit, only_active.
+    PasswordHash: auth_service.hash_password() usando bcrypt.
+    Convención de rutas admin IAM:
+                                    /admin/users
+                                    /admin/roles
+                                    /admin/tenants
+                                    /admin/assignments  
+    Todas protegidas por JWT vía AuthMiddleware.
+----------------------------------------------------------------------------------------------------
+21- ListParams:
+    Parámetros estándar de listado en endpoints admin:
+        skip (int, default 0)
+        limit (int, default 100)
+        only_active (bool, default True) para modelos con activo.
+----------------------------------------------------------------------------------------------------
+22- PasswordHash
+Hash de contraseñas: auth_service.hash_password() usando passlib + bcrypt.
+Verificación: auth_service.verify_password().
+----------------------------------------------------------------------------------------------------
+23- tenant:
+
+* “Burger House” → un tenant
+* “Pizza Express” → otro tenant
+* “Sushi Go” → otro tenant
+
+Todos usan la misma plataforma, pero cada negocio tiene:
+
+* sus propios productos,
+* su propio stock,
+* sus pedidos,
+* su caja,
+* sus empleados,
+* sus clientes,
+* sus repartidores,
+* sus reportes,
+* y su panel administrativo.
+
+Ejemplo real aplicado
+
+Imaginá una plataforma tipo:
+
+* PedidosYa
+* Rappi
+* Uber Eats
+
+Pero además con:
+
+* ERP gastronómico,
+* control interno,
+* caja,
+* administración,
+* métricas gerenciales,
+* logística,
+* multi sucursal,
+* inventario.
+
+Analogía simple
+
+La plataforma es como un shopping gastronómico:
+
+* El shopping = tu SaaS
+* Cada local = un tenant
+* Los clientes entran al mismo shopping
+* Pero cada local maneja:
+
+  * su caja,
+  * sus productos,
+  * su personal,
+  * sus pedidos,
+  * sus operaciones.
+----------------------------------------------------------------------------------------------------
+24- 
+----------------------------------------------------------------------------------------------------
+25- 
+----------------------------------------------------------------------------------------------------
+26- 
+----------------------------------------------------------------------------------------------------
+27- 
+----------------------------------------------------------------------------------------------------
+28- 
+----------------------------------------------------------------------------------------------------
+29- 
+----------------------------------------------------------------------------------------------------
+30- 
+----------------------------------------------------------------------------------------------------

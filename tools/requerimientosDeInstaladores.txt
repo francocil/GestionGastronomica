@@ -1,0 +1,33 @@
+# Herramientas globales
+python3
+pip
+virtualenv
+nodejs
+npm
+git
+pydantic
+
+# Backend (Python)
+fastapi
+sqlalchemy
+psycopg2-binary
+python-jose
+passlib
+uvicorn
+bcrypt
+alembic
+
+# Frontend (npm)
+npm:next
+npm:react
+npm:react-dom
+npm:typescript
+npm:tailwindcss
+npm:postcss
+npm:autoprefixer
+npm:axios
+npm:zustand
+npm:next-client-cookies
+npm install @mui/x-data-grid
+npm install @mui/icons-material
+
