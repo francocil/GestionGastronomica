@@ -1,0 +1,11 @@
+************ Actualizar Git ************
+git add .
+git commit -m "primer commit grande"
+
+************ conectar ************
+git remote add origin https://github.com/francocil/GestionGastronomica.git
+git branch -M main
+git push -u origin main
+
+
+
