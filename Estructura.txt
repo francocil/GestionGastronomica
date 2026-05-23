@@ -1,4 +1,6 @@
+├── .gitignore
 ├── Estructura.txt
+├── actualizarGit.txt
 ├── backend
 │   ├── alembic
 │   │   ├── README
@@ -8,6 +10,7 @@
 │   │       ├── 20260516_02_create_products_table.py
 │   │       ├── 20260517_01_create_permissions_tables.py
 │   │       ├── 5eafcb130b7e_create_products_table.py
+│   │       ├── 9fe6812d4588_merge_initial_branches.py
 │   │       └── aa84a1b5c5ec_initial_iam_schema.py
 │   ├── alembic.ini
 │   └── app
@@ -48,6 +51,7 @@
 │       │   ├── role.py
 │       │   ├── tenant.py
 │       │   └── user.py
+│       ├── seed.py
 │       └── services
 │           ├── __init__.py
 │           ├── auth_service.py
@@ -58,6 +62,7 @@
 │           ├── tenant_service.py
 │           ├── user_service.py
 │           └── user_tenant_role_service.py
+├── credenciales_login.txt
 ├── estructura_db.txt
 ├── frontend
 │   └── web

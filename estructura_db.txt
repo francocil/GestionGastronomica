@@ -10,6 +10,16 @@ TABLA: public.alembic_version
   - version_num                    | character varying    | NULLABLE: NO
 
 --------------------------------------------------------------------------------
+TABLA: public.permissions
+--------------------------------------------------------------------------------
+  - id                             | integer              | NULLABLE: NO
+  - nombre                         | character varying    | NULLABLE: NO
+  - descripcion                    | character varying    | NULLABLE: YES
+  - activo                         | boolean              | NULLABLE: NO
+  - fecha_creacion                 | timestamp with time zone | NULLABLE: YES
+  - fecha_actualizacion            | timestamp with time zone | NULLABLE: YES
+
+--------------------------------------------------------------------------------
 TABLA: public.products
 --------------------------------------------------------------------------------
   - id                             | integer              | NULLABLE: NO
@@ -18,6 +28,15 @@ TABLA: public.products
   - descripcion                    | character varying    | NULLABLE: YES
   - precio                         | double precision     | NULLABLE: NO
   - activo                         | boolean              | NULLABLE: NO
+  - fecha_creacion                 | timestamp with time zone | NULLABLE: YES
+  - fecha_actualizacion            | timestamp with time zone | NULLABLE: YES
+
+--------------------------------------------------------------------------------
+TABLA: public.role_permissions
+--------------------------------------------------------------------------------
+  - id                             | integer              | NULLABLE: NO
+  - role_id                        | integer              | NULLABLE: NO
+  - permission_id                  | integer              | NULLABLE: NO
   - fecha_creacion                 | timestamp with time zone | NULLABLE: YES
   - fecha_actualizacion            | timestamp with time zone | NULLABLE: YES
 
@@ -63,4 +82,3 @@ TABLA: public.users
   - activo                         | boolean              | NULLABLE: NO
   - fecha_creacion                 | timestamp with time zone | NULLABLE: YES
   - fecha_actualizacion            | timestamp with time zone | NULLABLE: YES
-  
