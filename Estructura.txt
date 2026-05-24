@@ -9,6 +9,7 @@
 │   │   └── versions
 │   │       ├── 20260516_02_create_products_table.py
 │   │       ├── 20260517_01_create_permissions_tables.py
+│   │       ├── 20260523_01_update_user_srs.py
 │   │       ├── 5eafcb130b7e_create_products_table.py
 │   │       ├── 9fe6812d4588_merge_initial_branches.py
 │   │       └── aa84a1b5c5ec_initial_iam_schema.py

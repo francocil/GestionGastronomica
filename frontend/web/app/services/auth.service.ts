@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8000", // ajustar si usás otro puerto
+  baseURL: "http://localhost:8000/api", // 🔥 prefijo /api agregado
   withCredentials: true,
   headers: {
     "X-Client-Type": "web",

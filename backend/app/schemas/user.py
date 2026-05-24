@@ -11,15 +11,22 @@
 # ==========================================================================
 
 from pydantic import BaseModel, EmailStr
+from datetime import datetime
+from typing import Optional
 
 
 # ---------------------------------------------------------
 # Base común para creación y actualización
+# (Alineado 1:1 al SRS)
 # ---------------------------------------------------------
 class UserBase(BaseModel):
     email: EmailStr
-    nombre: str
-    apellido: str
+    username: str
+    telefono: Optional[str] = None
+    empresa_id: Optional[int] = None
+    tipo_usuario_id: int
+    estado_usuario_id: int
+    mfa_estado_id: int
     activo: bool = True
 
 
@@ -34,9 +41,11 @@ class UserCreate(UserBase):
 # Actualizar usuario (sin password)
 # ---------------------------------------------------------
 class UserUpdate(BaseModel):
-    nombre: str | None = None
-    apellido: str | None = None
-    activo: bool | None = None
+    email: Optional[EmailStr] = None
+    telefono: Optional[str] = None
+    estado_usuario_id: Optional[int] = None
+    mfa_estado_id: Optional[int] = None
+    activo: Optional[bool] = None
 
 
 # ---------------------------------------------------------
@@ -44,6 +53,9 @@ class UserUpdate(BaseModel):
 # ---------------------------------------------------------
 class UserResponse(UserBase):
     id: int
+    fecha_creacion: datetime
+    fecha_ultimo_login: Optional[datetime] = None
+    eliminado: bool
 
     model_config = {
         "from_attributes": True
@@ -56,8 +68,7 @@ class UserResponse(UserBase):
 class UserWithTenantRole(BaseModel):
     id: int
     email: EmailStr
-    nombre: str
-    apellido: str
+    username: str
     tenant_id: int
     role: str
 
