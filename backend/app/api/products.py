@@ -30,13 +30,12 @@ def create_product(
 ):
     tenant_id = request.state.tenant_id
 
-    if product_in.tenant_id != tenant_id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="El tenant_id no coincide con el tenant seleccionado.",
-        )
-
-    return product_service.create_product(db, product_in)
+    # El tenant_id NO viene en el schema → lo agregamos acá
+    return product_service.create_product(
+        db=db,
+        tenant_id=tenant_id,
+        data=product_in,
+    )
 
 
 # ============================================================
@@ -93,7 +92,12 @@ def get_product(
     user=Depends(require_any_admin),
 ):
     tenant_id = request.state.tenant_id
-    product = product_service.get_product(db, product_id, tenant_id)
+
+    product = product_service.get_product(
+        db=db,
+        product_id=product_id,
+        tenant_id=tenant_id,
+    )
 
     if not product:
         raise HTTPException(
@@ -116,7 +120,13 @@ def update_product(
     user=Depends(require_any_admin),
 ):
     tenant_id = request.state.tenant_id
-    product = product_service.update_product(db, product_id, tenant_id, product_in)
+
+    product = product_service.update_product(
+        db=db,
+        product_id=product_id,
+        tenant_id=tenant_id,
+        data=product_in,
+    )
 
     if not product:
         raise HTTPException(
@@ -138,7 +148,12 @@ def delete_product(
     user=Depends(require_any_admin),
 ):
     tenant_id = request.state.tenant_id
-    product = product_service.deactivate_product(db, product_id, tenant_id)
+
+    product = product_service.deactivate_product(
+        db=db,
+        product_id=product_id,
+        tenant_id=tenant_id,
+    )
 
     if not product:
         raise HTTPException(

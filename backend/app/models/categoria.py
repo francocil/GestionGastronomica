@@ -27,10 +27,12 @@ class Categoria(Base):
         DateTime(timezone=True),
         server_default=func.now(),
     )
-    fecha_actualizacion: Mapped[datetime] = mapped_column(
+    fecha_actualizacion: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now(),
     )
+
+    eliminado: Mapped[bool] = mapped_column(Boolean, default=False)
 
     productos: Mapped[list["Product"]] = relationship(back_populates="categoria")

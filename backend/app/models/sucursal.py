@@ -28,11 +28,13 @@ class Sucursal(Base):
         DateTime(timezone=True),
         server_default=func.now(),
     )
-    fecha_actualizacion: Mapped[datetime] = mapped_column(
+    fecha_actualizacion: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now(),
     )
+
+    eliminado: Mapped[bool] = mapped_column(Boolean, default=False)
 
     movimientos: Mapped[list["StockMovimiento"]] = relationship(
         back_populates="sucursal"

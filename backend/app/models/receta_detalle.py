@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import String, DateTime, ForeignKey, func
+from sqlalchemy import String, DateTime, ForeignKey, func, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
@@ -31,6 +31,13 @@ class RecetaDetalle(Base):
         DateTime(timezone=True),
         server_default=func.now(),
     )
+    fecha_actualizacion: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    eliminado: Mapped[bool] = mapped_column(Boolean, default=False)
 
     receta: Mapped["Receta"] = relationship(back_populates="detalles")
     insumo: Mapped["Insumo"] = relationship(back_populates="receta_detalles")

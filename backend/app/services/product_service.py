@@ -1,43 +1,169 @@
-from typing import List, Optional, Tuple
+from __future__ import annotations
+
+from datetime import datetime
+from typing import Optional, Dict, Any
 
 from sqlalchemy.orm import Session
-from sqlalchemy import select, func, asc, desc
 
 from app.models.product import Product
-from app.schemas.product import ProductCreate, ProductUpdate
+from app.models.receta import Receta
+from app.schemas.product import (
+    ProductCreate,
+    ProductUpdate,
+    ProductResponse,
+)
 
 
 # ============================================================
-# CREATE PRODUCT
+# HELPERS
 # ============================================================
-def create_product(db: Session, product_in: ProductCreate) -> Product:
-    product = Product(
-        tenant_id=product_in.tenant_id,
-        nombre=product_in.nombre,
-        descripcion=product_in.descripcion,
-        precio=product_in.precio,
-        activo=product_in.activo,
+
+def _calcular_costo_desde_receta(
+    db: Session,
+    producto_id: int,
+    tenant_id: int,
+) -> Optional[float]:
+    receta = (
+        db.query(Receta)
+        .filter(
+            Receta.producto_id == producto_id,
+            Receta.tenant_id == tenant_id,
+        )
+        .first()
     )
-    db.add(product)
+
+    if not receta:
+        return None
+
+    total = 0.0
+    for detalle in receta.detalles:
+        total += detalle.costo_parcial
+
+    return total
+
+
+# ============================================================
+# CREATE
+# ============================================================
+
+def create_product(
+    db: Session,
+    tenant_id: int,
+    data: ProductCreate,
+) -> ProductResponse:
+
+    producto = Product(
+        tenant_id=tenant_id,
+        nombre=data.nombre,
+        descripcion=data.descripcion,
+        sku=data.sku,
+        precio=data.precio,
+        costo=data.costo,
+        imagen_url=data.imagen_url,
+        categoria_id=data.categoria_id,
+        unidad_medida_id=data.unidad_medida_id,
+        sucursal_id=data.sucursal_id,
+    )
+
+    db.add(producto)
     db.commit()
-    db.refresh(product)
-    return product
+    db.refresh(producto)
 
-
-# ============================================================
-# GET PRODUCT BY ID
-# ============================================================
-def get_product(db: Session, product_id: int, tenant_id: int) -> Optional[Product]:
-    stmt = select(Product).where(
-        Product.id == product_id,
-        Product.tenant_id == tenant_id
+    # Si tiene receta → recalcular costo
+    costo_receta = _calcular_costo_desde_receta(
+        db=db,
+        producto_id=producto.id,
+        tenant_id=tenant_id,
     )
-    return db.scalar(stmt)
+    if costo_receta is not None:
+        producto.costo = costo_receta
+        db.commit()
+        db.refresh(producto)
+
+    return ProductResponse.from_orm(producto)
 
 
 # ============================================================
-# LIST PRODUCTS (PAGINADO + FILTROS + ORDEN + FECHAS)
+# UPDATE
 # ============================================================
+
+def update_product(
+    db: Session,
+    product_id: int,
+    tenant_id: int,
+    data: ProductUpdate,
+) -> Optional[ProductResponse]:
+
+    producto = (
+        db.query(Product)
+        .filter(
+            Product.id == product_id,
+            Product.tenant_id == tenant_id,
+            Product.deleted_at.is_(None),
+        )
+        .first()
+    )
+
+    if not producto:
+        return None
+
+    for field, value in data.model_dump(exclude_unset=True).items():
+        setattr(producto, field, value)
+
+    # Si tiene receta → recalcular costo
+    costo_receta = _calcular_costo_desde_receta(
+        db=db,
+        producto_id=producto.id,
+        tenant_id=tenant_id,
+    )
+    if costo_receta is not None:
+        producto.costo = costo_receta
+
+    db.commit()
+    db.refresh(producto)
+
+    return ProductResponse.from_orm(producto)
+
+
+# ============================================================
+# LIST SIMPLE
+# ============================================================
+
+def list_products(
+    db: Session,
+    tenant_id: int,
+    categoria_id: Optional[int] = None,
+    sucursal_id: Optional[int] = None,
+    activos: Optional[bool] = None,
+) -> list[ProductResponse]:
+
+    q = (
+        db.query(Product)
+        .filter(
+            Product.tenant_id == tenant_id,
+            Product.deleted_at.is_(None),
+        )
+        .order_by(Product.nombre.asc())
+    )
+
+    if categoria_id is not None:
+        q = q.filter(Product.categoria_id == categoria_id)
+
+    if sucursal_id is not None:
+        q = q.filter(Product.sucursal_id == sucursal_id)
+
+    if activos is not None:
+        q = q.filter(Product.activo == activos)
+
+    productos = q.all()
+
+    return [ProductResponse.from_orm(p) for p in productos]
+
+
+# ============================================================
+# LIST ADVANCED (USADO POR TU ROUTER)
+# ============================================================
+
 def list_products_advanced(
     db: Session,
     tenant_id: int,
@@ -53,105 +179,102 @@ def list_products_advanced(
     fecha_hasta: Optional[str],
     fecha_actualizacion_desde: Optional[str],
     fecha_actualizacion_hasta: Optional[str],
-):
-    stmt = select(Product).where(Product.tenant_id == tenant_id)
+) -> Dict[str, Any]:
 
-    # Filtro por búsqueda
-    if search:
-        stmt = stmt.where(Product.nombre.ilike(f"%{search}%"))
-
-    # Filtro activo
-    if activo is not None:
-        stmt = stmt.where(Product.activo == activo)
-
-    # Filtro por precio
-    if min_precio is not None:
-        stmt = stmt.where(Product.precio >= min_precio)
-
-    if max_precio is not None:
-        stmt = stmt.where(Product.precio <= max_precio)
-
-    # Filtro por fecha de creación
-    if fecha_desde:
-        stmt = stmt.where(Product.fecha_creacion >= fecha_desde)
-
-    if fecha_hasta:
-        stmt = stmt.where(Product.fecha_creacion <= fecha_hasta)
-
-    # Filtro por fecha de actualización
-    if fecha_actualizacion_desde:
-        stmt = stmt.where(Product.fecha_actualizacion >= fecha_actualizacion_desde)
-
-    if fecha_actualizacion_hasta:
-        stmt = stmt.where(Product.fecha_actualizacion <= fecha_actualizacion_hasta)
-
-    # Ordenamiento
-    if sort_by in ["nombre", "precio", "activo", "fecha_creacion", "fecha_actualizacion"]:
-        column = getattr(Product, sort_by)
-        stmt = stmt.order_by(asc(column) if order == "asc" else desc(column))
-
-    # Total antes de paginar
-    total = db.scalar(
-        select(func.count()).select_from(stmt.subquery())
+    q = (
+        db.query(Product)
+        .filter(
+            Product.tenant_id == tenant_id,
+            Product.deleted_at.is_(None),
+        )
     )
 
-    # Paginación
-    offset = (page - 1) * limit
-    stmt = stmt.offset(offset).limit(limit)
+    if search:
+        q = q.filter(Product.nombre.ilike(f"%{search}%"))
 
-    items = list(db.scalars(stmt))
+    if activo is not None:
+        q = q.filter(Product.activo == activo)
+
+    if min_precio is not None:
+        q = q.filter(Product.precio >= min_precio)
+
+    if max_precio is not None:
+        q = q.filter(Product.precio <= max_precio)
+
+    # Ordenamiento
+    if sort_by:
+        col = getattr(Product, sort_by, None)
+        if col is not None:
+            if order == "desc":
+                q = q.order_by(col.desc())
+            else:
+                q = q.order_by(col.asc())
+
+    total = q.count()
+
+    items = (
+        q.offset((page - 1) * limit)
+        .limit(limit)
+        .all()
+    )
 
     return {
         "total": total,
-        "items": items,
+        "items": [ProductResponse.from_orm(p) for p in items],
     }
 
 
 # ============================================================
-# UPDATE PRODUCT
+# GET BY ID
 # ============================================================
-def update_product(
+
+def get_product(
     db: Session,
     product_id: int,
     tenant_id: int,
-    product_in: ProductUpdate,
-) -> Optional[Product]:
+) -> Optional[ProductResponse]:
 
-    product = get_product(db, product_id, tenant_id)
-    if not product:
+    producto = (
+        db.query(Product)
+        .filter(
+            Product.id == product_id,
+            Product.tenant_id == tenant_id,
+            Product.deleted_at.is_(None),
+        )
+        .first()
+    )
+
+    if not producto:
         return None
 
-    if product_in.nombre is not None:
-        product.nombre = product_in.nombre
-
-    if product_in.descripcion is not None:
-        product.descripcion = product_in.descripcion
-
-    if product_in.precio is not None:
-        product.precio = product_in.precio
-
-    if product_in.activo is not None:
-        product.activo = product_in.activo
-
-    db.commit()
-    db.refresh(product)
-    return product
+    return ProductResponse.from_orm(producto)
 
 
 # ============================================================
-# DEACTIVATE PRODUCT (SOFT DELETE)
+# DELETE (SOFT DELETE)
 # ============================================================
+
 def deactivate_product(
     db: Session,
     product_id: int,
-    tenant_id: int
-) -> Optional[Product]:
+    tenant_id: int,
+) -> Optional[ProductResponse]:
 
-    product = get_product(db, product_id, tenant_id)
-    if not product:
+    producto = (
+        db.query(Product)
+        .filter(
+            Product.id == product_id,
+            Product.tenant_id == tenant_id,
+            Product.deleted_at.is_(None),
+        )
+        .first()
+    )
+
+    if not producto:
         return None
 
-    product.activo = False
+    producto.deleted_at = datetime.utcnow()
     db.commit()
-    db.refresh(product)
-    return product
+    db.refresh(producto)
+
+    return ProductResponse.from_orm(producto)

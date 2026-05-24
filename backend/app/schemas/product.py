@@ -1,60 +1,79 @@
-# ==========================================================================================
-# Schemas de Producto
-#
-# Estos schemas definen las estructuras de entrada y salida utilizadas para:
-# - Crear productos
-# - Actualizar productos
-# - Listar productos
-# - Representar productos dentro del sistema multi‑tenant
-#
-# Compatibles con Pydantic v2 y con los modelos ORM.
-# ==========================================================================================
+from __future__ import annotations
 
-from pydantic import BaseModel
+from datetime import datetime
+from typing import Optional
+
+from pydantic import BaseModel, Field
 
 
-# ---------------------------------------------------------
-# Base común para creación y actualización
-# ---------------------------------------------------------
+# ============================================================
+# BASE
+# ============================================================
+
 class ProductBase(BaseModel):
-    nombre: str
-    descripcion: str | None = None
+    nombre: str = Field(..., max_length=150)
+    descripcion: Optional[str] = Field(None, max_length=300)
+
+    sku: Optional[str] = Field(None, max_length=50)
+
     precio: float
-    activo: bool = True
+    costo: Optional[float] = None
+
+    imagen_url: Optional[str] = Field(None, max_length=300)
+
+    categoria_id: Optional[int] = None
+    unidad_medida_id: Optional[int] = None
+    sucursal_id: Optional[int] = None
+
+    activo: Optional[bool] = True
 
 
-# ---------------------------------------------------------
-# Crear producto
-# ---------------------------------------------------------
+# ============================================================
+# CREATE
+# ============================================================
+
 class ProductCreate(ProductBase):
-    tenant_id: int
+    """
+    Campos requeridos para crear un producto.
+    tenant_id NO se recibe desde el cliente.
+    costo NO se recibe si el producto tiene receta (se calcula).
+    """
+    pass
 
 
-# ---------------------------------------------------------
-# Actualizar producto
-# ---------------------------------------------------------
+# ============================================================
+# UPDATE
+# ============================================================
+
 class ProductUpdate(BaseModel):
-    nombre: str | None = None
-    descripcion: str | None = None
-    precio: float | None = None
-    activo: bool | None = None
+    nombre: Optional[str] = Field(None, max_length=150)
+    descripcion: Optional[str] = Field(None, max_length=300)
+
+    sku: Optional[str] = Field(None, max_length=50)
+
+    precio: Optional[float] = None
+    costo: Optional[float] = None
+
+    imagen_url: Optional[str] = Field(None, max_length=300)
+
+    categoria_id: Optional[int] = None
+    unidad_medida_id: Optional[int] = None
+    sucursal_id: Optional[int] = None
+
+    activo: Optional[bool] = None
 
 
-# ---------------------------------------------------------
-# Respuesta pública del producto
-# ---------------------------------------------------------
+# ============================================================
+# RESPONSE
+# ============================================================
+
 class ProductResponse(ProductBase):
     id: int
     tenant_id: int
 
-    model_config = {
-        "from_attributes": True
-    }
+    fecha_creacion: datetime
+    fecha_actualizacion: datetime
+    deleted_at: Optional[datetime] = None
 
-
-# ---------------------------------------------------------
-# Listado de productos (útil para endpoints paginados)
-# ---------------------------------------------------------
-class ProductListResponse(BaseModel):
-    total: int
-    items: list[ProductResponse]
+    class Config:
+        from_attributes = True

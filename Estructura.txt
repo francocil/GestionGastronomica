@@ -7,23 +7,23 @@
 │   │   ├── env.py
 │   │   ├── script.py.mako
 │   │   └── versions
-│   │       ├── 20260516_02_create_products_table.py
-│   │       ├── 20260517_01_create_permissions_tables.py
-│   │       ├── 20260523_01_update_user_srs.py
-│   │       ├── 5eafcb130b7e_create_products_table.py
-│   │       ├── 9fe6812d4588_merge_initial_branches.py
-│   │       └── aa84a1b5c5ec_initial_iam_schema.py
+│   │       ├── 393a7ff60b56_initial_schema.py
 │   ├── alembic.ini
 │   └── app
 │       ├── api
 │       │   ├── __init__.py
 │       │   ├── admin_assignments.py
+│       │   ├── admin_empresas.py
 │       │   ├── admin_roles.py
 │       │   ├── admin_tenants.py
 │       │   ├── admin_users.py
 │       │   ├── auth.py
+│       │   ├── categorias.py
+│       │   ├── estado_usuario.py
+│       │   ├── mfa_estado.py
 │       │   ├── products.py
-│       │   └── router.py
+│       │   ├── router.py
+│       │   └── tipo_usuario.py
 │       ├── core
 │       │   ├── __init__.py
 │       │   ├── config.py
@@ -37,30 +37,51 @@
 │       ├── models
 │       │   ├── __init__.py
 │       │   ├── base.py
+│       │   ├── categoria.py
+│       │   ├── empresa.py
+│       │   ├── estado_usuario.py
+│       │   ├── insumo.py
+│       │   ├── mfa_estado.py
 │       │   ├── permission.py
 │       │   ├── product.py
+│       │   ├── receta.py
+│       │   ├── receta_detalle.py
 │       │   ├── role.py
 │       │   ├── role_permission.py
+│       │   ├── stock_movimiento.py
+│       │   ├── sucursal.py
 │       │   ├── tenant.py
+│       │   ├── tipo_usuario.py
+│       │   ├── unidad_medida.py
 │       │   ├── user.py
 │       │   └── user_tenant_role.py
 │       ├── schemas
 │       │   ├── __init__.py
 │       │   ├── auth.py
 │       │   ├── base.py
+│       │   ├── categoria.py
+│       │   ├── empresa.py
+│       │   ├── estado_usuario.py
+│       │   ├── mfa_estado.py
 │       │   ├── product.py
 │       │   ├── role.py
 │       │   ├── tenant.py
+│       │   ├── tipo_usuario.py
 │       │   └── user.py
 │       ├── seed.py
 │       └── services
 │           ├── __init__.py
 │           ├── auth_service.py
 │           ├── base.py
+│           ├── categoria_service.py
+│           ├── empresa_service.py
+│           ├── estado_usuario_service.py
+│           ├── mfa_estado_service.py
 │           ├── permission_service.py
 │           ├── product_service.py
 │           ├── role_service.py
 │           ├── tenant_service.py
+│           ├── tipo_usuario_service.py
 │           ├── user_service.py
 │           └── user_tenant_role_service.py
 ├── credenciales_login.txt

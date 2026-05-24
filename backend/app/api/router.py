@@ -27,3 +27,11 @@ def status():
 # Productos
 from app.api import products
 router.include_router(products.router)
+
+# Empresa
+from app.api import admin_empresas
+router.include_router(admin_empresas.router)
+
+# Categoria
+from app.api import categorias
+router.include_router(categorias.router)
