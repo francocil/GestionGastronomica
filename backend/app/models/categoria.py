@@ -3,20 +3,27 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import String, Boolean, DateTime, ForeignKey, func
+from sqlalchemy import String, Boolean, DateTime, ForeignKey, func, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
 
 if TYPE_CHECKING:
     from app.models.product import Product
+    from app.models.empresa import Empresa
 
 
-class Categoria(Base):
-    __tablename__ = "categorias"
+class CategoriaProducto(Base):
+    __tablename__ = "categorias_producto"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    tenant_id: Mapped[int] = mapped_column(ForeignKey("tenants.id"), index=True)
+
+    empresa_id: Mapped[int] = mapped_column(
+        ForeignKey("empresas.id"),
+        index=True,
+        nullable=False,
+    )
+    empresa: Mapped["Empresa"] = relationship()
 
     nombre: Mapped[str] = mapped_column(String(150), nullable=False)
     descripcion: Mapped[str | None] = mapped_column(String(300))

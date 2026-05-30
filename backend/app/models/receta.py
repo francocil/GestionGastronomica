@@ -1,3 +1,4 @@
+# receta.py
 from __future__ import annotations
 
 from datetime import datetime
@@ -11,15 +12,22 @@ from app.models.base import Base
 if TYPE_CHECKING:
     from app.models.product import Product
     from app.models.receta_detalle import RecetaDetalle
+    from app.models.empresa import Empresa
 
 
 class Receta(Base):
     __tablename__ = "recetas"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    tenant_id: Mapped[int] = mapped_column(ForeignKey("tenants.id"), index=True)
 
-    producto_id: Mapped[int] = mapped_column(ForeignKey("products.id"), unique=True)
+    empresa_id: Mapped[int] = mapped_column(
+        ForeignKey("empresas.id"),
+        index=True,
+        nullable=False,
+    )
+    empresa: Mapped["Empresa"] = relationship()
+
+    producto_id: Mapped[int] = mapped_column(ForeignKey("productos.id"), unique=True)
     descripcion: Mapped[str | None] = mapped_column(String(300))
 
     tiempo_preparacion: Mapped[int | None] = mapped_column(Integer)

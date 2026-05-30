@@ -1,13 +1,3 @@
-# =============================================================================================
-# Modelo Product
-#
-# Este modelo representa un producto dentro del sistema gastronómico.
-# Está diseñado para:
-# - Ser multi‑tenant (cada producto pertenece a un tenant).
-# - Ser compatible con SQLAlchemy 2.0.
-# - Incluir auditoría estándar.
-# - Ser extensible para futuras fases (categorías, variantes, stock, recetas, etc.).
-# =============================================================================================
 from __future__ import annotations
 
 from datetime import datetime
@@ -20,55 +10,37 @@ from sqlalchemy import (
     ForeignKey,
     func,
     Float,
+    Integer,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
 
 if TYPE_CHECKING:
-    from app.models.categoria import Categoria
+    from app.models.categoria import CategoriaProducto
     from app.models.unidad_medida import UnidadMedida
     from app.models.receta import Receta
-    from app.models.sucursal import Sucursal
+    from app.models.empresa import Empresa
 
 
 class Product(Base):
-    __tablename__ = "products"
+    __tablename__ = "productos"
 
-    # -------------------------
-    # Identificación
-    # -------------------------
     id: Mapped[int] = mapped_column(primary_key=True)
-    tenant_id: Mapped[int] = mapped_column(
-        ForeignKey("tenants.id"),
+
+    empresa_id: Mapped[int] = mapped_column(
+        ForeignKey("empresas.id"),
         index=True,
         nullable=False,
     )
+    empresa: Mapped["Empresa"] = relationship()
 
-    # -------------------------
-    # Relaciones principales
-    # -------------------------
     categoria_id: Mapped[int | None] = mapped_column(
-        ForeignKey("categorias.id"),
+        ForeignKey("categorias_producto.id"),
         nullable=True,
     )
-    categoria: Mapped["Categoria"] = relationship(back_populates="productos")
+    categoria: Mapped["CategoriaProducto"] = relationship(back_populates="productos")
 
-    unidad_medida_id: Mapped[int | None] = mapped_column(
-        ForeignKey("unidades_medida.id"),
-        nullable=True,
-    )
-    unidad_medida: Mapped["UnidadMedida"] = relationship()
-
-    sucursal_id: Mapped[int | None] = mapped_column(
-        ForeignKey("sucursales.id"),
-        nullable=True,
-    )
-    sucursal: Mapped["Sucursal"] = relationship()
-
-    # -------------------------
-    # Datos del producto
-    # -------------------------
     nombre: Mapped[str] = mapped_column(String(150), nullable=False)
     descripcion: Mapped[str | None] = mapped_column(String(300))
 
@@ -77,13 +49,17 @@ class Product(Base):
     precio: Mapped[float] = mapped_column(Float, nullable=False)
     costo: Mapped[float | None] = mapped_column(Float)
 
+    moneda_id: Mapped[int | None] = mapped_column(ForeignKey("monedas.id"))
+
     imagen_url: Mapped[str | None] = mapped_column(String(300))
+
+    tiempo_preparacion: Mapped[int | None] = mapped_column(Integer)
+
+    es_combo: Mapped[bool] = mapped_column(Boolean, default=False)
+    disponible: Mapped[bool] = mapped_column(Boolean, default=True)
 
     activo: Mapped[bool] = mapped_column(Boolean, default=True)
 
-    # -------------------------
-    # Auditoría
-    # -------------------------
     fecha_creacion: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
@@ -93,11 +69,8 @@ class Product(Base):
         server_default=func.now(),
         onupdate=func.now(),
     )
-    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    eliminado: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    # -------------------------
-    # Relaciones derivadas
-    # -------------------------
     receta: Mapped["Receta"] = relationship(
         back_populates="producto",
         uselist=False,

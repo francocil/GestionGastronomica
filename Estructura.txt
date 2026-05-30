@@ -7,7 +7,7 @@
 │   │   ├── env.py
 │   │   ├── script.py.mako
 │   │   └── versions
-│   │       ├── 393a7ff60b56_initial_schema.py
+│   │       └── f7448773b20d_full_initial_schema.py
 │   ├── alembic.ini
 │   └── app
 │       ├── api
@@ -20,10 +20,16 @@
 │       │   ├── auth.py
 │       │   ├── categorias.py
 │       │   ├── estado_usuario.py
+│       │   ├── insumos.py
 │       │   ├── mfa_estado.py
 │       │   ├── products.py
+│       │   ├── receta_detalle.py
+│       │   ├── recetas.py
 │       │   ├── router.py
-│       │   └── tipo_usuario.py
+│       │   ├── stock_movimientos.py
+│       │   ├── sucursales.py
+│       │   ├── tipo_usuario.py
+│       │   └── unidades_medida.py
 │       ├── core
 │       │   ├── __init__.py
 │       │   ├── config.py
@@ -62,11 +68,17 @@
 │       │   ├── categoria.py
 │       │   ├── empresa.py
 │       │   ├── estado_usuario.py
+│       │   ├── insumo.py
 │       │   ├── mfa_estado.py
 │       │   ├── product.py
+│       │   ├── receta.py
+│       │   ├── receta_detalle.py
 │       │   ├── role.py
+│       │   ├── stock_movimiento.py
+│       │   ├── sucursal.py
 │       │   ├── tenant.py
 │       │   ├── tipo_usuario.py
+│       │   ├── unidad_medida.py
 │       │   └── user.py
 │       ├── seed.py
 │       └── services
@@ -76,12 +88,18 @@
 │           ├── categoria_service.py
 │           ├── empresa_service.py
 │           ├── estado_usuario_service.py
+│           ├── insumo_service.py
 │           ├── mfa_estado_service.py
 │           ├── permission_service.py
 │           ├── product_service.py
+│           ├── receta_detalle_service.py
+│           ├── receta_service.py
 │           ├── role_service.py
+│           ├── stock_movimiento_service.py
+│           ├── sucursal_service.py
 │           ├── tenant_service.py
 │           ├── tipo_usuario_service.py
+│           ├── unidad_medida_service.py
 │           ├── user_service.py
 │           └── user_tenant_role_service.py
 ├── credenciales_login.txt

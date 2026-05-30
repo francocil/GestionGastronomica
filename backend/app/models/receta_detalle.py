@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import String, DateTime, ForeignKey, func, Boolean
+from sqlalchemy import DateTime, ForeignKey, func, Boolean, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
@@ -12,20 +12,26 @@ if TYPE_CHECKING:
     from app.models.receta import Receta
     from app.models.insumo import Insumo
     from app.models.unidad_medida import UnidadMedida
+    from app.models.empresa import Empresa
 
 
 class RecetaDetalle(Base):
     __tablename__ = "receta_detalle"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    tenant_id: Mapped[int] = mapped_column(ForeignKey("tenants.id"), index=True)
+
+    empresa_id: Mapped[int] = mapped_column(
+        ForeignKey("empresas.id"),
+        index=True,
+        nullable=False,
+    )
 
     receta_id: Mapped[int] = mapped_column(ForeignKey("recetas.id"))
     insumo_id: Mapped[int] = mapped_column(ForeignKey("insumos.id"))
     unidad_medida_id: Mapped[int] = mapped_column(ForeignKey("unidades_medida.id"))
 
-    cantidad: Mapped[float] = mapped_column(nullable=False)
-    costo_parcial: Mapped[float] = mapped_column(nullable=False)
+    cantidad: Mapped[float] = mapped_column(Float, nullable=False)
+    costo_parcial: Mapped[float] = mapped_column(Float, nullable=False)
 
     fecha_creacion: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

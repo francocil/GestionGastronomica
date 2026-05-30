@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import String, DateTime, ForeignKey, func, Boolean
+from sqlalchemy import String, DateTime, ForeignKey, func, Boolean, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
@@ -11,30 +11,31 @@ from app.models.base import Base
 if TYPE_CHECKING:
     from app.models.insumo import Insumo
     from app.models.sucursal import Sucursal
+    from app.models.empresa import Empresa
 
 
-class StockMovimiento(Base):
-    __tablename__ = "stock_movimientos"
+class MovimientoStock(Base):
+    __tablename__ = "movimientos_stock"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    tenant_id: Mapped[int] = mapped_column(ForeignKey("tenants.id"), index=True)
+
+    empresa_id: Mapped[int] = mapped_column(
+        ForeignKey("empresas.id"),
+        index=True,
+        nullable=False,
+    )
 
     insumo_id: Mapped[int] = mapped_column(ForeignKey("insumos.id"))
     sucursal_id: Mapped[int] = mapped_column(ForeignKey("sucursales.id"))
 
-    tipo_movimiento: Mapped[str] = mapped_column(String(20))  # entrada/salida/ajuste
-    cantidad: Mapped[float] = mapped_column(nullable=False)
-    motivo: Mapped[str | None] = mapped_column(String(200))
+    tipo: Mapped[str] = mapped_column(String(20))  # INGRESO / EGRESO / AJUSTE
+    cantidad: Mapped[float] = mapped_column(Float, nullable=False)
     referencia: Mapped[str | None] = mapped_column(String(100))
+    motivo: Mapped[str | None] = mapped_column(String(200))
 
-    fecha_creacion: Mapped[datetime] = mapped_column(
+    fecha: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
-    )
-    fecha_actualizacion: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
     )
 
     eliminado: Mapped[bool] = mapped_column(Boolean, default=False)

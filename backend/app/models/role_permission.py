@@ -1,14 +1,39 @@
-from sqlalchemy import Column, Integer, ForeignKey, DateTime, func
-from sqlalchemy.orm import relationship
+# role_permission.py
+from datetime import datetime
+
+from sqlalchemy import (
+    Integer,
+    ForeignKey,
+    DateTime,
+    func,
+    Boolean,
+)
+from sqlalchemy.orm import Mapped, mapped_column
+
 from app.models.base import Base
 
-class RolePermission(Base):
-    __tablename__ = "role_permissions"
 
-    id = Column(Integer, primary_key=True, index=True)
+class RolPermiso(Base):
+    __tablename__ = "roles_permisos"
 
-    role_id = Column(Integer, ForeignKey("roles.id", ondelete="CASCADE"), nullable=False)
-    permission_id = Column(Integer, ForeignKey("permissions.id", ondelete="CASCADE"), nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
 
-    fecha_creacion = Column(DateTime(timezone=True), server_default=func.now())
-    fecha_actualizacion = Column(DateTime(timezone=True), onupdate=func.now())
+    rol_id: Mapped[int] = mapped_column(
+        ForeignKey("roles.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    permiso_id: Mapped[int] = mapped_column(
+        ForeignKey("permisos.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+
+    permitido: Mapped[bool] = mapped_column(Boolean, default=True)
+
+    fecha_creacion: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )
+    fecha_actualizacion: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        onupdate=func.now(),
+    )

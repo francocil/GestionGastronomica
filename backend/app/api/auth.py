@@ -161,8 +161,8 @@ def get_me(token: str, db: Session = Depends(get_db)):
     return AuthenticatedUser(
         id=user.id,
         email=user.email,
-        nombre=user.nombre,
-        apellido=user.apellido,
+        nombre=user.nom,
+        apellido=user.,
         tenant_id=tenant_id,
         role=RoleOut(
             id=role.id,
